@@ -1,0 +1,83 @@
+
+# Image type defines an image in the gallery
+type GalleryImage {
+  id: ID!
+  name: String
+  description: String
+  width: Int!
+  height: Int!
+  url: String!
+}
+
+# Album as a collection of images
+type GalleryAlbum {
+  id: ID!
+  name: String!
+  images: [GalleryImage]
+  imagesConnection(first: Int, after: Int): GalleryAlbumImagesConnection!
+}
+
+# Define the graph required for pagination
+type GalleryAlbumImagesConnection {
+  edges: [GalleryAlbumImagesEdge]
+  images: [GalleryImage]
+  pageInfo: PageInfo!
+}
+ 
+type GalleryAlbumImagesEdge {
+  cursor: Int!
+  node: GalleryImage
+}
+
+type PageInfo {
+  startCursor: Int!
+  endCursor: Int!
+  hasNextPage: Boolean!
+}
+ 
+# The "Query" type is special: it lists all of the available queries that
+# clients can execute, along with the return type for each.
+type Query {
+  albums: [GalleryAlbum]
+}
+
+input GalleryCreateAlbumInput {
+  name: String!
+}
+
+input GalleryUpdateAlbumInput {
+  id: ID!
+  name: String
+}
+
+input GalleryCreateImageInput {
+  album: ID!,
+  requests: [GalleryCreateImageRequest!]!
+}
+
+input GalleryCreateImageRequest {
+  name: String!
+  description: String!
+}
+
+input GalleryUpdateImageInput {
+  id: ID!
+  name: String!
+  description: String!
+}
+
+type GalleryCreateImageKey {
+  key: String!
+  expiresAt: String!
+}
+
+
+type Mutation {
+  createAlbum(input: GalleryCreateAlbumInput!): GalleryAlbum
+  updateAlbum(input: GalleryUpdateAlbumInput!): GalleryAlbum
+  deleteAlbum(input: [ID!]!): [ID!]!
+
+  createImage(input: GalleryCreateImageInput!): [GalleryCreateImageKey]
+  updateImage(input: GalleryUpdateImageInput!): GalleryImage
+  deleteImage(input: [ID!]!): [ID!]!
+}

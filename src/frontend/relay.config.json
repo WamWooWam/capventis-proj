@@ -1,0 +1,6 @@
+{
+    "src": "./src",
+    "artifactDirectory": "./src/__generated__",
+    "schema": "../schema/gallery.graphql",
+    "language": "typescript"
+}
