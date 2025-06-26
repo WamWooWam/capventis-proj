@@ -16,6 +16,7 @@ type GalleryImage implements Node {
 type GalleryAlbum implements Node {
   id: ID!
   name: String!
+  count: Int!
   images: [GalleryImage]
   imagesConnection(first: Int, after: Int): GalleryAlbumImagesConnection!
 }
@@ -28,13 +29,13 @@ type GalleryAlbumImagesConnection {
 }
  
 type GalleryAlbumImagesEdge {
-  cursor: Int!
+  cursor: ID!
   node: GalleryImage
 }
 
 type PageInfo {
-  startCursor: Int!
-  endCursor: Int!
+  startCursor: ID!
+  endCursor: ID!
   hasNextPage: Boolean!
   hasPreviousPage: Boolean!
 }
