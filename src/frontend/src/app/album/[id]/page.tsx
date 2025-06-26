@@ -5,38 +5,41 @@ import { graphql } from "relay-runtime"
 import { useLazyLoadQuery, usePaginationFragment } from "react-relay"
 import { pagePaginatedAlbumViewQuery } from "@/__generated__/pagePaginatedAlbumViewQuery.graphql"
 import { pagePaginatedAlbumView_albumImages$key } from "@/__generated__/pagePaginatedAlbumView_albumImages.graphql"
-import { use } from "react"
+import { use, useEffect, useState } from "react"
+import Dialog from "@/components/Dialog"
+import UploadDialog from "./components/UploadDialog"
+import { useInView } from "react-intersection-observer"
 
 const albumsFragment = graphql`
-fragment pagePaginatedAlbumView_albumImages on GalleryAlbum
-@argumentDefinitions(
-    first: { type: "Int", defaultValue: 5 }
-    after: { type: "Int" }
-)
-@refetchable(queryName: "AlbumImagesPaginationQuery") {
-    imagesConnection(first: $first, after: $after)
-        @connection(key: "pagePaginatedAlbumView__imagesConnection") {
-        edges {
-            node {
-                id,
-                name,
-                description,
-                url
+    fragment pagePaginatedAlbumView_albumImages on GalleryAlbum
+    @argumentDefinitions(
+        first: { type: "Int", defaultValue: 5 }
+        after: { type: "ID" }
+    )
+    @refetchable(queryName: "AlbumImagesPaginationQuery") {
+        imagesConnection(first: $first, after: $after)
+            @connection(key: "pagePaginatedAlbumView__imagesConnection") {
+            edges {
+                node {
+                    id,
+                    name,
+                    description,
+                    url
+                }
             }
         }
     }
-}
 `
 
 const albumQuery = graphql`
-query pagePaginatedAlbumViewQuery($id: ID!) {
-    albums(ids: [$id]) {
-        id,
-        name,
-        count,
-        ...pagePaginatedAlbumView_albumImages
+    query pagePaginatedAlbumViewQuery($id: ID!) {
+        albums(ids: [$id]) {
+            id,
+            name,
+            count,
+            ...pagePaginatedAlbumView_albumImages
+        }
     }
-}
 `
 
 export default function AlbumPage({ params }: { params: Promise<{ id: string }> }) {
@@ -47,28 +50,42 @@ export default function AlbumPage({ params }: { params: Promise<{ id: string }> 
         data,
         hasNext,
         loadNext,
-        isLoadingNext
+        isLoadingNext,
     } = usePaginationFragment<pagePaginatedAlbumViewQuery, pagePaginatedAlbumView_albumImages$key>(albumsFragment, { ...album });
 
+    const [isShowingUpload, setIsShowingUpload] = useState<boolean>(false);
+    const [ref, inView] = useInView()
+
+    useEffect(() => {
+        if (inView && hasNext && !isLoadingNext) {
+            console.log("load next")
+            loadNext(10);
+        }
+    }, [inView, hasNext, isLoadingNext]);
+
     return (
-        <div className="max-w-[1200px] ml-auto mr-auto">
-            <div className="grid grid-cols-1 min-md:grid-cols-2">
-                <div>
-                    <h1 className="text-4xl m-0.5 mt-4 mb-1">{album.name}</h1>
-                    <h4 className="m-0.5 mb-2">{album.count} photos.</h4>
+        <>
+            <UploadDialog albumId={album.id} isOpen={isShowingUpload} onClosed={() => setIsShowingUpload(false)} />
+            <div className="max-w-[1200px] ml-auto mr-auto">
+                <div className="grid grid-cols-1 min-md:grid-cols-2">
+                    <div>
+                        <h1 className="text-4xl m-0.5 mt-4 mb-1">{album.name}</h1>
+                        <h4 className="m-0.5 mb-2">{album.count} photos.</h4>
+                    </div>
+                    <div className="flex items-center justify-end mr-0.5">
+                        <Button onClick={() => setIsShowingUpload(true)}>Upload</Button>
+                    </div>
                 </div>
-                <div className="flex items-center justify-end mr-0.5">
-                    <Button>Upload</Button>
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
+                    {...data.imagesConnection.edges!.map((image) => (
+                        <img key={image?.node?.id}
+                            src={image?.node?.url}
+                            alt={image?.node?.description ?? undefined}
+                            className="w-full h-full object-contain rounded-md object-bottom object-center aspect-square" />
+                    ))}
+                    <div ref={ref} />
                 </div>
             </div>
-            <div className="grid grid-cols-2 lg:grid-cols-3 -mx-2">
-                {...data.imagesConnection.edges!.map((image) => (
-                    <img key={image?.node?.id} 
-                         src={image?.node?.url} 
-                         alt={image?.node?.description ?? undefined}
-                         className="object-contain mx-2 rounded-md" />
-                ))}
-            </div>
-        </div>
+        </>
     )
 }

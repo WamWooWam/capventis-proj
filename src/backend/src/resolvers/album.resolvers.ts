@@ -1,23 +1,39 @@
 import { AlbumImage, Image } from "../database.js";
 import { GalleryAlbumImagesConnection, GalleryAlbumResolvers, GalleryImage } from "../__generated__/resolvers-types.js";
-
-import { Op } from "sequelize";
 import { cleanId, createImage } from "../adapter.js";
+import { Op } from "sequelize";
 
 export const albumResolvers: GalleryAlbumResolvers = {
     count: async (parent, args, contextValue, info): Promise<number> => {
-        return await AlbumImage.count({ where: { AlbumId: cleanId(parent.id) } })
+        return await AlbumImage.count({
+            where: {
+                AlbumId: cleanId(parent.id)
+            },
+            include: [{
+                model: Image,
+                where: {
+                    width: { [Op.ne]: -1 },
+                    height: { [Op.ne]: -1 }
+                }
+            }]
+        })
     },
     images: async (parent, args, contextValue, info): Promise<GalleryImage[]> => {
         const result = await AlbumImage.findAll({
             where: {
                 AlbumId: cleanId(parent.id)
             },
-            include: [Image],
+            include: [{
+                model: Image,
+                where: {
+                    width: { [Op.ne]: -1 },
+                    height: { [Op.ne]: -1 }
+                }
+            }],
             order: ["index"]
         })
 
-        return result.filter(m => m.Image?.width != -1).map(m => createImage(m.Image!))
+        return result.map(m => createImage(m.Image!))
     },
     imagesConnection: async (parent, args)
         : Promise<GalleryAlbumImagesConnection> => {
@@ -27,12 +43,20 @@ export const albumResolvers: GalleryAlbumResolvers = {
 
         const edges = await AlbumImage.findAll({
             where: {
-                AlbumId: cleanId(parent.id)
+                AlbumId: cleanId(parent.id),
+                index: {
+                    [Op.gt]: !!after ? parseInt(after) : 0
+                }
             },
-            include: [Image],
+            include: [{
+                model: Image,
+                where: {
+                    width: { [Op.ne]: -1 },
+                    height: { [Op.ne]: -1 }
+                }
+            }],
             order: ["index"],
-            limit: !!first ? first + 1 : undefined,
-            offset: !!after ? after : undefined
+            limit: !!first ? first + 1 : undefined
         })
 
         const requestedEdges = edges.slice(0, first ?? undefined);

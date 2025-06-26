@@ -16,7 +16,9 @@ const fetchGraphQL: FetchFunction = async (request, variables) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query: request.text, variables }),
     });
+
     if (!resp.ok) {
+        debugger;
         throw new Error("Response failed.");
     }
     return await resp.json();

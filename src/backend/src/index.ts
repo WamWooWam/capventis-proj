@@ -33,8 +33,10 @@ export interface MyContext {
         plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
     });
     await server.start();
+
+    app.use(cors<cors.CorsRequest>())
+    
     app.use('/graphql',
-        cors<cors.CorsRequest>(),
         express.json(),
         expressMiddleware(server),
     );

@@ -31,7 +31,7 @@ const AlbumImages = (props: AlbumImagesProps) => {
             onPointerLeave={pointerCancel}
             onPointerCancel={pointerCancel}
             className="w-[100%] h-[100%]">
-            {image ? <img className="rounded-md" src={image.url} /> : undefined}
+            {image ? <img className="rounded-md object-cover w-[100%] h-[100%]" src={image.url} /> : undefined}
         </div>
     )
 };

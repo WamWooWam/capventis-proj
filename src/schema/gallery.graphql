@@ -18,7 +18,7 @@ type GalleryAlbum implements Node {
   name: String!
   count: Int!
   images: [GalleryImage]
-  imagesConnection(first: Int, after: Int): GalleryAlbumImagesConnection!
+  imagesConnection(first: Int, after: ID): GalleryAlbumImagesConnection!
 }
 
 # Define the graph required for pagination
@@ -35,7 +35,7 @@ type GalleryAlbumImagesEdge {
 
 type PageInfo {
   startCursor: ID!
-  endCursor: ID!
+  endCursor: ID
   hasNextPage: Boolean!
   hasPreviousPage: Boolean!
 }

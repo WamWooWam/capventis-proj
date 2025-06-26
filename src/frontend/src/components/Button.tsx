@@ -1,7 +1,6 @@
 import { memo, PropsWithChildren } from "react";
 
 type ButtonProps = {
-
     onClick?: () => void;
 }
 

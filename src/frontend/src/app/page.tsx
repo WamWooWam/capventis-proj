@@ -38,7 +38,7 @@ export default function Albums() {
             <Button>Create</Button>
           </div>
         </div>
-        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 -ml-2 -mr-2">
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
           {...data.albums!.map((album) => (<AlbumView key={album!.id} {...album}></AlbumView>))}
         </div>
       </div>

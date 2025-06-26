@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6bc779b243e9394e4d3f5eeb75cd637a>>
+ * @generated SignedSource<<fdf0ee4300f1f785371b48ccf882307b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,7 +11,7 @@
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type AlbumImagesPaginationQuery$variables = {
-  after?: number | null | undefined;
+  after?: string | null | undefined;
   first?: number | null | undefined;
   id: string;
 };
@@ -229,16 +229,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "6af6eaf141911d44e93ef9632bef39a6",
+    "cacheID": "94753e941a258a862ae3b2fd2b5f67ed",
     "id": null,
     "metadata": {},
     "name": "AlbumImagesPaginationQuery",
     "operationKind": "query",
-    "text": "query AlbumImagesPaginationQuery(\n  $after: Int\n  $first: Int = 5\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...pagePaginatedAlbumView_albumImages_2HEEH6\n    id\n  }\n}\n\nfragment pagePaginatedAlbumView_albumImages_2HEEH6 on GalleryAlbum {\n  imagesConnection(first: $first, after: $after) {\n    edges {\n      node {\n        id\n        name\n        description\n        url\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  id\n}\n"
+    "text": "query AlbumImagesPaginationQuery(\n  $after: ID\n  $first: Int = 5\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...pagePaginatedAlbumView_albumImages_2HEEH6\n    id\n  }\n}\n\nfragment pagePaginatedAlbumView_albumImages_2HEEH6 on GalleryAlbum {\n  imagesConnection(first: $first, after: $after) {\n    edges {\n      node {\n        id\n        name\n        description\n        url\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  id\n}\n"
   }
 };
 })();
 
-(node as any).hash = "f94fe535446e6317fef254ac640c7c52";
+(node as any).hash = "c8a31b011a40448580182eb2bb9f69c4";
 
 export default node;

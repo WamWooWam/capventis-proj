@@ -5,6 +5,7 @@ export function createAlbum(album: Album | null): GalleryAlbum {
     if (!album)
         return null!;
     return ({
+        __typename: 'GalleryAlbum',
         id: `Album_${album.id}`,
         name: album.name
     }) as GalleryAlbum;
@@ -14,6 +15,7 @@ export function createImage(image: Image | null): GalleryImage {
     if (!image)
         return null!;
     return ({
+        __typename: 'GalleryImage',
         id: `Image_${image.id}`,
         name: image.name,
         description: image.description,

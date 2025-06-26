@@ -17,7 +17,7 @@ type AlbumViewProps = {
 }
 
 const AlbumView = memo((a: AlbumViewProps) => (
-    <Link className="cursor-pointer m-2" href={`/album/${a.id}`}>
+    <Link className="cursor-pointer" href={`/album/${a.id}`}>
         <div className="aspect-square mb-2 rounded-md bg-gray-300 transition-all hover:drop-shadow-md hover:-translate-1">
             <AlbumImages images={a.imagesConnection?.images ?? []} />
         </div>

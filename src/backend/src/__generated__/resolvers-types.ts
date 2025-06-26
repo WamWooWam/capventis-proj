@@ -28,7 +28,7 @@ export type GalleryAlbum = Node & {
 
 
 export type GalleryAlbumImagesConnectionArgs = {
-  after?: InputMaybe<Scalars['Int']['input']>;
+  after?: InputMaybe<Scalars['ID']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
 };
 
@@ -132,7 +132,7 @@ export type Node = {
 
 export type PageInfo = {
   __typename?: 'PageInfo';
-  endCursor: Scalars['ID']['output'];
+  endCursor?: Maybe<Scalars['ID']['output']>;
   hasNextPage: Scalars['Boolean']['output'];
   hasPreviousPage: Scalars['Boolean']['output'];
   startCursor: Scalars['ID']['output'];
@@ -325,7 +325,7 @@ export type NodeResolvers<ContextType = MyContext, ParentType extends ResolversP
 }>;
 
 export type PageInfoResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo']> = ResolversObject<{
-  endCursor?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  endCursor?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   hasPreviousPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   startCursor?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;

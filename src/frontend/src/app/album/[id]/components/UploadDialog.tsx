@@ -1,0 +1,144 @@
+import { UploadDialogGetKeyMutation, UploadDialogGetKeyMutation$data } from "@/__generated__/UploadDialogGetKeyMutation.graphql";
+import Dialog, { DialogProps } from "@/components/Dialog";
+import { DragEvent, useState } from "react";
+import { useMutation } from "react-relay";
+import { graphql, PayloadError } from "relay-runtime";
+
+const getUploadKeyMutation = graphql`
+    mutation UploadDialogGetKeyMutation($params: GalleryCreateImageInput!) {
+        createImage(input: $params) {
+            key
+        }
+    }
+`
+
+type UploadDialogProps = {
+    albumId: string
+} & Exclude<DialogProps, { title: string }>;
+
+type UploadingFile = {
+    key: string;
+    isUploaded: boolean; // todo: progress
+    thumb: string; 
+}
+
+export default function UploadDialog({ albumId, isOpen, onClosed }: UploadDialogProps) {
+    const [getUploadKeys, isGettingUploadKeys] = useMutation<UploadDialogGetKeyMutation>(getUploadKeyMutation)
+    const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([]);
+
+    const doUploads = (files: File[]) => new Promise((resolve, reject) => {
+        const uploads = files.map((f, i) => ({
+            name: f?.name ?? `IMG_${i.toString().padStart(4, '0')}`,
+            description: ""
+        }))
+
+        if (!uploads.length) {
+            reject();
+        }
+
+        const onCompleted = (response: UploadDialogGetKeyMutation$data, errors: PayloadError[] | null) => {
+            if (errors) {
+                // TODO: oops!
+                reject(errors);
+                return;
+            }
+
+            const keys = [...response.createImage!.map(r => r!.key)]
+            for (let i = 0; i < keys.length; i++) {
+                setUploadingFiles((f) => [...f, {
+                    key: keys[i],
+                    isUploaded: false,
+                    thumb: URL.createObjectURL(files[i])
+                }])
+            }
+
+            const fetches = []
+            for (let i = 0; i < keys.length; i++) {
+                let key = keys[i];
+                let file = files[i];
+
+                const data = new FormData()
+                data.append('image', file)
+
+                const headers = new Headers();
+                headers.append("Authorization", key);
+
+                const promise = fetch(`${process.env.NEXT_PUBLIC_HOST}static/image`, {
+                    method: 'POST',
+                    body: data,
+                    headers,
+                })
+                    .then((r) => {
+                        setUploadingFiles((f) => f.map(u => {
+                            if (u.key === key) {
+                                return { ...u, isUploaded: true };
+                            }
+
+                            return u;
+                        }));
+                    })
+
+                fetches.push(promise);
+            }
+
+            Promise.all(fetches)
+                .then(resolve)
+                .catch(reject);
+        }
+
+        getUploadKeys({
+            variables: {
+                params: {
+                    album: albumId,
+                    requests: uploads
+                }
+            },
+            onCompleted
+        });
+    })
+
+    const onDragOver = (e: DragEvent) => {
+        e.preventDefault()
+        e.dataTransfer.effectAllowed = isGettingUploadKeys ? "none" : "copy"
+    }
+
+    const onDrop = async (e: DragEvent) => {
+        e.preventDefault()
+
+        let files = [];
+        if (e.dataTransfer.items) {
+            for (const item of e.dataTransfer.items) {
+                if (item.kind === 'file')
+                    files.push(item.getAsFile()!);
+            }
+        } else {
+            files = [...e.dataTransfer.files];
+        }
+
+        await doUploads(files);
+    }
+
+    return (
+        <Dialog title="Upload"
+            isOpen={isOpen}
+            onClosed={onClosed}>
+            <div className="flex flex-row h-full"
+                onDragOver={onDragOver}
+                onDrop={onDrop}>
+                <div className="h-full flex-3/4 mr-2 bg-gray-100 dark:bg-gray-800 rounded-xl grid">
+                    <div className="grid gap-2 grid-cols-1 lg:grid-cols-3">
+                        {uploadingFiles.map(f => {
+                            const uploadStyle = f.isUploaded ? "opacity-100" : "opacity-50";
+                            return <img key={f.key}
+                                src={f.thumb}
+                                className={`object-contain rounded-md object-bottom ${uploadStyle}`} />
+                        })}
+                    </div>
+                </div>
+                <div className="h-full flex-1/4 ml-2 bg-gray-100 dark:bg-gray-800 rounded-xl flex items-center justify-center">
+                    <p>Drag here to upload!</p>
+                </div>
+            </div>
+        </Dialog>
+    )
+}
