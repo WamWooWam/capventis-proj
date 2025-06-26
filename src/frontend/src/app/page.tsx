@@ -27,7 +27,9 @@ const environment = new Environment({
 export default function Home() {
   return (
     <div className="max-w-[1200px] ml-auto mr-auto">
-      <AlbumsView />
+      <RelayEnvironmentProvider environment={environment}>
+        <AlbumsView />
+      </RelayEnvironmentProvider>
     </div>
   );
 }

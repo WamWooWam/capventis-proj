@@ -17,7 +17,7 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
-export type GalleryAlbum = {
+export type GalleryAlbum = Node & {
   __typename?: 'GalleryAlbum';
   id: Scalars['ID']['output'];
   images?: Maybe<Array<Maybe<GalleryImage>>>;
@@ -64,7 +64,7 @@ export type GalleryCreateImageRequest = {
   name: Scalars['String']['input'];
 };
 
-export type GalleryImage = {
+export type GalleryImage = Node & {
   __typename?: 'GalleryImage';
   description?: Maybe<Scalars['String']['output']>;
   height: Scalars['Int']['output'];
@@ -125,16 +125,32 @@ export type MutationUpdateImageArgs = {
   input: GalleryUpdateImageInput;
 };
 
+export type Node = {
+  id: Scalars['ID']['output'];
+};
+
 export type PageInfo = {
   __typename?: 'PageInfo';
   endCursor: Scalars['Int']['output'];
   hasNextPage: Scalars['Boolean']['output'];
+  hasPreviousPage: Scalars['Boolean']['output'];
   startCursor: Scalars['Int']['output'];
 };
 
 export type Query = {
   __typename?: 'Query';
   albums?: Maybe<Array<Maybe<GalleryAlbum>>>;
+  node?: Maybe<Node>;
+};
+
+
+export type QueryAlbumsArgs = {
+  ids?: InputMaybe<Array<Scalars['ID']['input']>>;
+};
+
+
+export type QueryNodeArgs = {
+  id?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -206,6 +222,10 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 ) => TResult | Promise<TResult>;
 
 
+/** Mapping of interface types */
+export type ResolversInterfaceTypes<_RefType extends Record<string, unknown>> = ResolversObject<{
+  Node: ( GalleryAlbum ) | ( GalleryImage );
+}>;
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
@@ -223,6 +243,7 @@ export type ResolversTypes = ResolversObject<{
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   Mutation: ResolverTypeWrapper<{}>;
+  Node: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['Node']>;
   PageInfo: ResolverTypeWrapper<PageInfo>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
@@ -244,6 +265,7 @@ export type ResolversParentTypes = ResolversObject<{
   ID: Scalars['ID']['output'];
   Int: Scalars['Int']['output'];
   Mutation: {};
+  Node: ResolversInterfaceTypes<ResolversParentTypes>['Node'];
   PageInfo: PageInfo;
   Query: {};
   String: Scalars['String']['output'];
@@ -295,15 +317,22 @@ export type MutationResolvers<ContextType = MyContext, ParentType extends Resolv
   updateImage?: Resolver<Maybe<ResolversTypes['GalleryImage']>, ParentType, ContextType, RequireFields<MutationUpdateImageArgs, 'input'>>;
 }>;
 
+export type NodeResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Node'] = ResolversParentTypes['Node']> = ResolversObject<{
+  __resolveType: TypeResolveFn<'GalleryAlbum' | 'GalleryImage', ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+}>;
+
 export type PageInfoResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo']> = ResolversObject<{
   endCursor?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  hasPreviousPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   startCursor?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type QueryResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
-  albums?: Resolver<Maybe<Array<Maybe<ResolversTypes['GalleryAlbum']>>>, ParentType, ContextType>;
+  albums?: Resolver<Maybe<Array<Maybe<ResolversTypes['GalleryAlbum']>>>, ParentType, ContextType, Partial<QueryAlbumsArgs>>;
+  node?: Resolver<Maybe<ResolversTypes['Node']>, ParentType, ContextType, Partial<QueryNodeArgs>>;
 }>;
 
 export type Resolvers<ContextType = MyContext> = ResolversObject<{
@@ -313,6 +342,7 @@ export type Resolvers<ContextType = MyContext> = ResolversObject<{
   GalleryCreateImageKey?: GalleryCreateImageKeyResolvers<ContextType>;
   GalleryImage?: GalleryImageResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  Node?: NodeResolvers<ContextType>;
   PageInfo?: PageInfoResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
 }>;

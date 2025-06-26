@@ -2,13 +2,13 @@ import { AlbumImage, Image } from "../database.js";
 import { GalleryAlbumImagesConnection, GalleryAlbumResolvers, GalleryImage } from "../__generated__/resolvers-types.js";
 
 import { Op } from "sequelize";
-import { createImage } from "../adapter.js";
+import { cleanId, createImage } from "../adapter.js";
 
 export const albumResolvers: GalleryAlbumResolvers = {
     images: async (parent, args, contextValue, info): Promise<GalleryImage[]> => {
         const result = await AlbumImage.findAll({
             where: {
-                AlbumId: parent.id
+                AlbumId: cleanId(parent.id)
             },
             include: [Image],
             order: ["index"]
@@ -24,12 +24,12 @@ export const albumResolvers: GalleryAlbumResolvers = {
 
         const edges = await AlbumImage.findAll({
             where: {
-                AlbumId: parent.id
+                AlbumId: cleanId(parent.id)
             },
             include: [Image],
             order: ["index"],
-            limit: first != null ? first + 1 : undefined,
-            offset: after != null ? after : undefined
+            limit: !!first ? first + 1 : undefined,
+            offset: !!after ? after : undefined
         })
 
         const requestedEdges = edges.slice(0, first ?? undefined);
@@ -44,6 +44,7 @@ export const albumResolvers: GalleryAlbumResolvers = {
                 startCursor: requestedEdges[0]?.index,
                 endCursor: requestedEdges[requestedEdges.length - 1]?.index,
                 hasNextPage: !first ? false : edges.length > first,
+                hasPreviousPage: !!after
             },
         };
     }

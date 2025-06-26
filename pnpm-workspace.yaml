@@ -1,2 +1,8 @@
 packages:
   - src/*
+
+onlyBuiltDependencies:
+  - '@apollo/protobufjs'
+  - '@tailwindcss/oxide'
+  - sharp
+  - sqlite3

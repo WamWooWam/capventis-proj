@@ -1,6 +1,6 @@
 import { Album } from "../database.js";
 import { MutationResolvers } from "../__generated__/resolvers-types.js";
-import { createAlbum } from "../adapter.js";
+import { cleanId, createAlbum } from "../adapter.js";
 import { randomUUID } from "crypto";
 
 export const albumMutators: Partial<MutationResolvers> = {
@@ -14,7 +14,7 @@ export const albumMutators: Partial<MutationResolvers> = {
     },
     updateAlbum: async (parent, args) => {
         const { id } = args.input;
-        const album = await Album.findByPk(id);
+        const album = await Album.findByPk(cleanId(id));
         if (!album) throw new Error("Not found!");
 
         if (args.input.name) {
@@ -27,7 +27,8 @@ export const albumMutators: Partial<MutationResolvers> = {
     },
     deleteAlbum: async (parent, args) => {
         let ids = []
-        for (const id of args.input) {
+        for (const i of args.input) {
+            const id = cleanId(i);
             try {
                 const album = await Album.findByPk(id);
                 if (!album) throw new Error("Not found!");

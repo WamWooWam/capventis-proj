@@ -1,6 +1,9 @@
+interface Node {
+  id: ID!
+}
 
 # Image type defines an image in the gallery
-type GalleryImage {
+type GalleryImage implements Node {
   id: ID!
   name: String
   description: String
@@ -10,7 +13,7 @@ type GalleryImage {
 }
 
 # Album as a collection of images
-type GalleryAlbum {
+type GalleryAlbum implements Node {
   id: ID!
   name: String!
   images: [GalleryImage]
@@ -33,12 +36,14 @@ type PageInfo {
   startCursor: Int!
   endCursor: Int!
   hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
 }
  
 # The "Query" type is special: it lists all of the available queries that
 # clients can execute, along with the return type for each.
 type Query {
-  albums: [GalleryAlbum]
+  node(id: ID): Node
+  albums(ids: [ID!]): [GalleryAlbum]
 }
 
 input GalleryCreateAlbumInput {
