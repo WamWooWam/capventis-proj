@@ -1,4 +1,6 @@
 import { memo } from "react";
+import AlbumImages from "./AlbumImages";
+import Link from "next/link";
 
 type AlbumViewProps = {
     readonly id?: string | undefined;
@@ -15,10 +17,12 @@ type AlbumViewProps = {
 }
 
 const AlbumView = memo((a: AlbumViewProps) => (
-    <a className="border rounded shadow-lg cursor-pointer m-2" href="#">
+    <Link className="cursor-pointer m-2" href={`/album/${a.id}`}>
+        <div className="aspect-square mb-2 rounded-md bg-gray-300 transition-all hover:drop-shadow-md hover:-translate-1">
+            <AlbumImages images={a.imagesConnection?.images ?? []} />
+        </div>
         <p>{a.name}</p>
-        {a.imagesConnection?.images?.[0] ? <img src={a.imagesConnection.images[0].url} /> : undefined}
-    </a>
+    </Link>
 ))
 
 export default AlbumView

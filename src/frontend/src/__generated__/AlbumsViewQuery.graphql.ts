@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7f77c8bbdf9aeaaf65758700b865236e>>
+ * @generated SignedSource<<3acc916dd9473d558f9a218072723f0a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -49,7 +49,7 @@ v2 = [
   {
     "kind": "Literal",
     "name": "first",
-    "value": 4
+    "value": 8
   }
 ],
 v3 = {
@@ -122,7 +122,7 @@ return {
                 "storageKey": null
               }
             ],
-            "storageKey": "imagesConnection(first:4)"
+            "storageKey": "imagesConnection(first:8)"
           }
         ],
         "storageKey": null
@@ -173,7 +173,7 @@ return {
                 "storageKey": null
               }
             ],
-            "storageKey": "imagesConnection(first:4)"
+            "storageKey": "imagesConnection(first:8)"
           }
         ],
         "storageKey": null
@@ -181,16 +181,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "71f2e71dafbc8bf024d211ef2b655305",
+    "cacheID": "ef0c5e420ca72bc9efb98811252aa5c7",
     "id": null,
     "metadata": {},
     "name": "AlbumsViewQuery",
     "operationKind": "query",
-    "text": "query AlbumsViewQuery {\n  albums {\n    id\n    name\n    imagesConnection(first: 4) {\n      images {\n        name\n        description\n        width\n        height\n        url\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query AlbumsViewQuery {\n  albums {\n    id\n    name\n    imagesConnection(first: 8) {\n      images {\n        name\n        description\n        width\n        height\n        url\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "5608903cfdbc8169534432b5fc8a16b0";
+(node as any).hash = "817464d5082f0f8f3da55cf5167726d7";
 
 export default node;

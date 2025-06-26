@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "relay": "relay-compiler --src ./src --schema ../schema/gallery.graphql",
+    "relay": "relay-compiler",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

@@ -3,7 +3,7 @@
 import { Environment, FetchFunction, Network } from "relay-runtime";
 import { RelayEnvironmentProvider, graphql, loadQuery, useLazyLoadQuery, usePreloadedQuery } from "react-relay";
 
-import AlbumsView from "./components/AlbumsView";
+import AlbumsView from "./components/album/AlbumsView";
 import Image from "next/image";
 
 const HTTP_ENDPOINT = "http://localhost:4000/graphql/";
@@ -27,9 +27,7 @@ const environment = new Environment({
 export default function Home() {
   return (
     <div className="max-w-[1200px] ml-auto mr-auto">
-      <RelayEnvironmentProvider environment={environment}>
-        <AlbumsView />
-      </RelayEnvironmentProvider>
+      <AlbumsView />
     </div>
   );
 }
