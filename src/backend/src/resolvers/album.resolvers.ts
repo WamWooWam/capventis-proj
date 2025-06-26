@@ -5,6 +5,9 @@ import { Op } from "sequelize";
 import { cleanId, createImage } from "../adapter.js";
 
 export const albumResolvers: GalleryAlbumResolvers = {
+    count: async (parent, args, contextValue, info): Promise<number> => {
+        return await AlbumImage.count({ where: { AlbumId: cleanId(parent.id) } })
+    },
     images: async (parent, args, contextValue, info): Promise<GalleryImage[]> => {
         const result = await AlbumImage.findAll({
             where: {
@@ -36,13 +39,13 @@ export const albumResolvers: GalleryAlbumResolvers = {
 
         return {
             edges: requestedEdges.map((edge) => ({
-                cursor: edge.index,
+                cursor: edge.index.toString(),
                 node: createImage(edge.Image!),
             })),
             images: requestedEdges.map(m => createImage(m.Image!)),
             pageInfo: {
-                startCursor: requestedEdges[0]?.index,
-                endCursor: requestedEdges[requestedEdges.length - 1]?.index,
+                startCursor: requestedEdges[0]?.index?.toString(),
+                endCursor: requestedEdges[requestedEdges.length - 1]?.index?.toString(),
                 hasNextPage: !first ? false : edges.length > first,
                 hasPreviousPage: !!after
             },

@@ -19,6 +19,7 @@ export type Scalars = {
 
 export type GalleryAlbum = Node & {
   __typename?: 'GalleryAlbum';
+  count: Scalars['Int']['output'];
   id: Scalars['ID']['output'];
   images?: Maybe<Array<Maybe<GalleryImage>>>;
   imagesConnection: GalleryAlbumImagesConnection;
@@ -40,7 +41,7 @@ export type GalleryAlbumImagesConnection = {
 
 export type GalleryAlbumImagesEdge = {
   __typename?: 'GalleryAlbumImagesEdge';
-  cursor: Scalars['Int']['output'];
+  cursor: Scalars['ID']['output'];
   node?: Maybe<GalleryImage>;
 };
 
@@ -131,10 +132,10 @@ export type Node = {
 
 export type PageInfo = {
   __typename?: 'PageInfo';
-  endCursor: Scalars['Int']['output'];
+  endCursor: Scalars['ID']['output'];
   hasNextPage: Scalars['Boolean']['output'];
   hasPreviousPage: Scalars['Boolean']['output'];
-  startCursor: Scalars['Int']['output'];
+  startCursor: Scalars['ID']['output'];
 };
 
 export type Query = {
@@ -272,6 +273,7 @@ export type ResolversParentTypes = ResolversObject<{
 }>;
 
 export type GalleryAlbumResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['GalleryAlbum'] = ResolversParentTypes['GalleryAlbum']> = ResolversObject<{
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   images?: Resolver<Maybe<Array<Maybe<ResolversTypes['GalleryImage']>>>, ParentType, ContextType>;
   imagesConnection?: Resolver<ResolversTypes['GalleryAlbumImagesConnection'], ParentType, ContextType, Partial<GalleryAlbumImagesConnectionArgs>>;
@@ -287,7 +289,7 @@ export type GalleryAlbumImagesConnectionResolvers<ContextType = MyContext, Paren
 }>;
 
 export type GalleryAlbumImagesEdgeResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['GalleryAlbumImagesEdge'] = ResolversParentTypes['GalleryAlbumImagesEdge']> = ResolversObject<{
-  cursor?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  cursor?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   node?: Resolver<Maybe<ResolversTypes['GalleryImage']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -323,10 +325,10 @@ export type NodeResolvers<ContextType = MyContext, ParentType extends ResolversP
 }>;
 
 export type PageInfoResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo']> = ResolversObject<{
-  endCursor?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  endCursor?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   hasPreviousPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  startCursor?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  startCursor?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

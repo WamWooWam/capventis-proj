@@ -18,9 +18,8 @@ export function createImage(image: Image | null): GalleryImage {
         name: image.name,
         description: image.description,
         width: image.width,
-        height: image.height,
-        url: `${process.env.HOST}static/image/${image.id}`
-    })
+        height: image.height
+    }) as GalleryImage
 }
 
 /**

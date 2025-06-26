@@ -1,13 +1,13 @@
 import { QueryResolvers, Resolvers } from "../__generated__/resolvers-types.js";
 
 import { Album, Image, sequelize } from "../database.js";
-import { createAlbum, createImage } from "../adapter.js";
+import { cleanId, createAlbum, createImage } from "../adapter.js";
 import { Op } from "sequelize";
 
 export const queryResolvers: QueryResolvers = {
     albums: async (parent, params) => {
         if (params.ids) {
-            return (await Album.findAll({ where: { id: { [Op.in]: [...params.ids] } } }))
+            return (await Album.findAll({ where: { id: { [Op.in]: [...params.ids.map(cleanId)] } } }))
                 .map(createAlbum)
         }
         return (await Album.findAll()).map(createAlbum)
