@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<73330583ed69060b674de15f6c959a22>>
+ * @generated SignedSource<<6bc779b243e9394e4d3f5eeb75cd637a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,7 +17,7 @@ export type AlbumImagesPaginationQuery$variables = {
 };
 export type AlbumImagesPaginationQuery$data = {
   readonly node: {
-    readonly " $fragmentSpreads": FragmentRefs<"pageQuery_albumImages">;
+    readonly " $fragmentSpreads": FragmentRefs<"pagePaginatedAlbumView_albumImages">;
   } | null | undefined;
 };
 export type AlbumImagesPaginationQuery = {
@@ -94,7 +94,7 @@ return {
           {
             "args": (v2/*: any*/),
             "kind": "FragmentSpread",
-            "name": "pageQuery_albumImages"
+            "name": "pagePaginatedAlbumView_albumImages"
           }
         ],
         "storageKey": null
@@ -215,7 +215,7 @@ return {
                 "args": (v2/*: any*/),
                 "filters": null,
                 "handle": "connection",
-                "key": "pageAlbums__imagesConnection",
+                "key": "pagePaginatedAlbumView__imagesConnection",
                 "kind": "LinkedHandle",
                 "name": "imagesConnection"
               }
@@ -229,16 +229,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "84f23561df741e5825abc1dc86d1ad0f",
+    "cacheID": "6af6eaf141911d44e93ef9632bef39a6",
     "id": null,
     "metadata": {},
     "name": "AlbumImagesPaginationQuery",
     "operationKind": "query",
-    "text": "query AlbumImagesPaginationQuery(\n  $after: Int\n  $first: Int = 5\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...pageQuery_albumImages_2HEEH6\n    id\n  }\n}\n\nfragment pageQuery_albumImages_2HEEH6 on GalleryAlbum {\n  imagesConnection(first: $first, after: $after) {\n    edges {\n      node {\n        id\n        name\n        description\n        url\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  id\n}\n"
+    "text": "query AlbumImagesPaginationQuery(\n  $after: Int\n  $first: Int = 5\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...pagePaginatedAlbumView_albumImages_2HEEH6\n    id\n  }\n}\n\nfragment pagePaginatedAlbumView_albumImages_2HEEH6 on GalleryAlbum {\n  imagesConnection(first: $first, after: $after) {\n    edges {\n      node {\n        id\n        name\n        description\n        url\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  id\n}\n"
   }
 };
 })();
 
-(node as any).hash = "cdddd91a307a40d0292c2c60cd5ff09c";
+(node as any).hash = "f94fe535446e6317fef254ac640c7c52";
 
 export default node;

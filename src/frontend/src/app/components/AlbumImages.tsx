@@ -26,7 +26,6 @@ const AlbumImages = (props: AlbumImagesProps) => {
 
     const image = props.images![imageIndex];
 
-
     return (
         <div onPointerMove={pointerMove}
             onPointerLeave={pointerCancel}

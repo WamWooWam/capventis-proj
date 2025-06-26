@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6ef7cc3536ec305817231e93a3f831cf>>
+ * @generated SignedSource<<0f86c053729b88d53c409fc83732887b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,6 +15,7 @@ export type pagePaginatedAlbumViewQuery$variables = {
 };
 export type pagePaginatedAlbumViewQuery$data = {
   readonly albums: ReadonlyArray<{
+    readonly count: number;
     readonly id: string;
     readonly name: string;
     readonly " $fragmentSpreads": FragmentRefs<"pagePaginatedAlbumView_albumImages">;
@@ -60,7 +61,14 @@ v3 = {
   "name": "name",
   "storageKey": null
 },
-v4 = [
+v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "count",
+  "storageKey": null
+},
+v5 = [
   {
     "kind": "Literal",
     "name": "first",
@@ -84,6 +92,7 @@ return {
         "selections": [
           (v2/*: any*/),
           (v3/*: any*/),
+          (v4/*: any*/),
           {
             "args": null,
             "kind": "FragmentSpread",
@@ -112,9 +121,10 @@ return {
         "selections": [
           (v2/*: any*/),
           (v3/*: any*/),
+          (v4/*: any*/),
           {
             "alias": null,
-            "args": (v4/*: any*/),
+            "args": (v5/*: any*/),
             "concreteType": "GalleryAlbumImagesConnection",
             "kind": "LinkedField",
             "name": "imagesConnection",
@@ -202,7 +212,7 @@ return {
           },
           {
             "alias": null,
-            "args": (v4/*: any*/),
+            "args": (v5/*: any*/),
             "filters": null,
             "handle": "connection",
             "key": "pagePaginatedAlbumView__imagesConnection",
@@ -215,16 +225,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "6f386e427a3ee2ba079eaae3f084cb5b",
+    "cacheID": "07dfbdbd36ea8948f4cea3ddf1d8f6e4",
     "id": null,
     "metadata": {},
     "name": "pagePaginatedAlbumViewQuery",
     "operationKind": "query",
-    "text": "query pagePaginatedAlbumViewQuery(\n  $id: ID!\n) {\n  albums(ids: [$id]) {\n    id\n    name\n    ...pagePaginatedAlbumView_albumImages\n  }\n}\n\nfragment pagePaginatedAlbumView_albumImages on GalleryAlbum {\n  imagesConnection(first: 5) {\n    edges {\n      node {\n        id\n        name\n        description\n        url\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  id\n}\n"
+    "text": "query pagePaginatedAlbumViewQuery(\n  $id: ID!\n) {\n  albums(ids: [$id]) {\n    id\n    name\n    count\n    ...pagePaginatedAlbumView_albumImages\n  }\n}\n\nfragment pagePaginatedAlbumView_albumImages on GalleryAlbum {\n  imagesConnection(first: 5) {\n    edges {\n      node {\n        id\n        name\n        description\n        url\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  id\n}\n"
   }
 };
 })();
 
-(node as any).hash = "3514b5f70aedef938b6472be9a34b8f4";
+(node as any).hash = "25414276a7edd1bf7b2eced5e921a1d2";
 
 export default node;
