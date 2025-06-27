@@ -8,7 +8,7 @@ import { PropsWithChildren } from "react"
 import { RelayEnvironmentProvider } from "react-relay"
 import { Environment, FetchFunction, Network } from "relay-runtime";
 
-const HTTP_ENDPOINT = "http://localhost:4000/graphql/";
+const HTTP_ENDPOINT = process.env.NEXT_PUBLIC_HOST + "graphql/";
 
 const fetchGraphQL: FetchFunction = async (request, variables) => {
     const resp = await fetch(HTTP_ENDPOINT, {

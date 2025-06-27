@@ -1,0 +1,40 @@
+name: "capventis-gallery"
+services:
+  frontend:
+    build:
+      dockerfile: src/frontend/Dockerfile
+    expose:
+      - 3000
+    environment:
+      - NEXT_PUBLIC_HOST=https://wamwoowam.co.uk/gallery/
+    networks:
+      - bridge-network
+  backend:
+    build:
+      dockerfile: src/backend/Dockerfile
+    expose:
+      - 4000
+    environment:
+      - HOST=https://wamwoowam.co.uk/gallery/
+      - UPLOAD_HMAC_KEY=QmGsiruVLQmrr5Ezp6UIabHd44CSqSuyPnsRDLQ95kVF08NYnUsCYghljU7MSM2Y
+      - DB_FILE=/data/db/prod.db
+    volumes:
+      - database:/data/db
+    networks:
+      - bridge-network
+  nginx:
+    build:
+      dockerfile: nginx/Dockerfile
+    depends_on:
+      - frontend
+      - backend
+    restart: always
+    ports:
+      - "5130:80"
+    networks:
+      - bridge-network
+networks:
+  bridge-network:
+    driver: bridge
+volumes:
+  database:

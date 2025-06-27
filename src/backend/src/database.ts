@@ -1,9 +1,6 @@
 import { CreationOptional, DataTypes, InferAttributes, InferCreationAttributes, Model, Sequelize } from "sequelize";
 
-import { randomUUID } from "crypto";
-import { readFile } from "fs/promises";
-
-export const sequelize = new Sequelize('sqlite:test.db');
+export const sequelize = new Sequelize('sqlite:' + process.env.DB_FILE);
 
 export interface Image extends Model<InferAttributes<Image>, InferCreationAttributes<Image>> {
     id: string,
