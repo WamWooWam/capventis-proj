@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fdf0ee4300f1f785371b48ccf882307b>>
+ * @generated SignedSource<<d028140025abf115fd22c59b0a6e682e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -33,7 +33,7 @@ var v0 = [
     "name": "after"
   },
   {
-    "defaultValue": 5,
+    "defaultValue": 10,
     "kind": "LocalArgument",
     "name": "first"
   },
@@ -229,16 +229,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "94753e941a258a862ae3b2fd2b5f67ed",
+    "cacheID": "ca27786bd3b6ab5230b928981dfd6ea7",
     "id": null,
     "metadata": {},
     "name": "AlbumImagesPaginationQuery",
     "operationKind": "query",
-    "text": "query AlbumImagesPaginationQuery(\n  $after: ID\n  $first: Int = 5\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...pagePaginatedAlbumView_albumImages_2HEEH6\n    id\n  }\n}\n\nfragment pagePaginatedAlbumView_albumImages_2HEEH6 on GalleryAlbum {\n  imagesConnection(first: $first, after: $after) {\n    edges {\n      node {\n        id\n        name\n        description\n        url\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  id\n}\n"
+    "text": "query AlbumImagesPaginationQuery(\n  $after: ID\n  $first: Int = 10\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...pagePaginatedAlbumView_albumImages_2HEEH6\n    id\n  }\n}\n\nfragment pagePaginatedAlbumView_albumImages_2HEEH6 on GalleryAlbum {\n  imagesConnection(first: $first, after: $after) {\n    edges {\n      node {\n        id\n        name\n        description\n        url\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  id\n}\n"
   }
 };
 })();
 
-(node as any).hash = "c8a31b011a40448580182eb2bb9f69c4";
+(node as any).hash = "402e0fcb6e4ca76bbab20cac517a85f3";
 
 export default node;

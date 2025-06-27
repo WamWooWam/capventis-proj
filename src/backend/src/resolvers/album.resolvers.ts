@@ -1,13 +1,13 @@
 import { AlbumImage, Image } from "../database.js";
 import { GalleryAlbumImagesConnection, GalleryAlbumResolvers, GalleryImage } from "../__generated__/resolvers-types.js";
-import { cleanId, createImage } from "../adapter.js";
+import { createImage } from "../adapter.js";
 import { Op } from "sequelize";
 
 export const albumResolvers: GalleryAlbumResolvers = {
     count: async (parent, args, contextValue, info): Promise<number> => {
         return await AlbumImage.count({
             where: {
-                AlbumId: cleanId(parent.id)
+                AlbumId: parent.id
             },
             include: [{
                 model: Image,
@@ -21,7 +21,7 @@ export const albumResolvers: GalleryAlbumResolvers = {
     images: async (parent, args, contextValue, info): Promise<GalleryImage[]> => {
         const result = await AlbumImage.findAll({
             where: {
-                AlbumId: cleanId(parent.id)
+                AlbumId: parent.id
             },
             include: [{
                 model: Image,
@@ -43,7 +43,7 @@ export const albumResolvers: GalleryAlbumResolvers = {
 
         const edges = await AlbumImage.findAll({
             where: {
-                AlbumId: cleanId(parent.id),
+                AlbumId: parent.id,
                 index: {
                     [Op.gt]: !!after ? parseInt(after) : 0
                 }

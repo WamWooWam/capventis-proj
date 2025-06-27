@@ -1,6 +1,7 @@
 import { UploadDialogGetKeyMutation, UploadDialogGetKeyMutation$data } from "@/__generated__/UploadDialogGetKeyMutation.graphql";
+import Button from "@/components/Button";
 import Dialog, { DialogProps } from "@/components/Dialog";
-import { DragEvent, useState } from "react";
+import { ChangeEvent, DragEvent, useRef, useState } from "react";
 import { useMutation } from "react-relay";
 import { graphql, PayloadError } from "relay-runtime";
 
@@ -19,10 +20,11 @@ type UploadDialogProps = {
 type UploadingFile = {
     key: string;
     isUploaded: boolean; // todo: progress
-    thumb: string; 
+    thumb: string;
 }
 
 export default function UploadDialog({ albumId, isOpen, onClosed }: UploadDialogProps) {
+    const ref = useRef<HTMLInputElement>(null);
     const [getUploadKeys, isGettingUploadKeys] = useMutation<UploadDialogGetKeyMutation>(getUploadKeyMutation)
     const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([]);
 
@@ -118,10 +120,21 @@ export default function UploadDialog({ albumId, isOpen, onClosed }: UploadDialog
         await doUploads(files);
     }
 
+    const onUploadClick = () => {
+        if (!ref.current)
+            return;
+
+        ref.current.click();
+    }
+
+    const onSelected = (e: ChangeEvent<HTMLInputElement>) => {
+        const files = [...ref.current!.files!];
+        doUploads(files);
+    }
+
     return (
-        <Dialog title="Upload"
-            isOpen={isOpen}
-            onClosed={onClosed}>
+        <Dialog title="Upload" size="large" isOpen={isOpen} onClosed={onClosed}>
+            <input ref={ref} type="file" className="hidden" onChange={onSelected} />
             <div className="flex flex-row h-full"
                 onDragOver={onDragOver}
                 onDrop={onDrop}>
@@ -131,12 +144,14 @@ export default function UploadDialog({ albumId, isOpen, onClosed }: UploadDialog
                             const uploadStyle = f.isUploaded ? "opacity-100" : "opacity-50";
                             return <img key={f.key}
                                 src={f.thumb}
-                                className={`object-contain rounded-md object-bottom ${uploadStyle}`} />
+                                className={`object-contain transition-opacity rounded-md object-bottom ${uploadStyle}`} />
                         })}
                     </div>
                 </div>
-                <div className="h-full flex-1/4 ml-2 bg-gray-100 dark:bg-gray-800 rounded-xl flex items-center justify-center">
+                <div className="h-full flex-1/4 ml-2 bg-gray-100 dark:bg-gray-800 rounded-xl flex flex-col text-center items-center justify-center">
                     <p>Drag here to upload!</p>
+                    <p className="text-xs my-2">or</p>
+                    <Button onClick={onUploadClick}>Open Files</Button>
                 </div>
             </div>
         </Dialog>

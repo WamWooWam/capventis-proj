@@ -1,11 +1,11 @@
 import { createHmac, randomUUID } from "crypto";
 import { MutationResolvers } from "../__generated__/resolvers-types.js";
 import { Album, AlbumImage, Image } from "../database.js";
-import { cleanId, createImage } from "../adapter.js";
+import {  createImage } from "../adapter.js";
 
 export const imageMutators: Partial<MutationResolvers> = {
     createImage: async (parent, args) => {
-        const album = await Album.findByPk(cleanId(args.input.album))
+        const album = await Album.findByPk(args.input.album)
         if (!album)
             throw new Error("Album not found!")
 
@@ -20,7 +20,7 @@ export const imageMutators: Partial<MutationResolvers> = {
             const request = args.input.requests[i];
             const { name, description } = request
 
-            const id = randomUUID();
+            const id = `Image_${randomUUID()}`;
             const image = await Image.create({
                 id,
                 name,
@@ -50,7 +50,7 @@ export const imageMutators: Partial<MutationResolvers> = {
     },
     updateImage: async (parent, args) => {
         const { id } = args.input;
-        const image = await Image.findByPk(cleanId(id));
+        const image = await Image.findByPk(id);
         if (!image) throw new Error("Not found!");
 
         if (args.input.name) {
@@ -69,7 +69,7 @@ export const imageMutators: Partial<MutationResolvers> = {
         let ids = []
         for (const id of args.input) {
             try {
-                const image = await Image.findByPk(cleanId(id));
+                const image = await Image.findByPk(id);
                 if (!image) throw new Error("Not found!");
                 await image.destroy();
 

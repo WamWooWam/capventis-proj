@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0f86c053729b88d53c409fc83732887b>>
+ * @generated SignedSource<<c63d0929f1c9a5ff0787c0949ec8cfb5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -72,7 +72,7 @@ v5 = [
   {
     "kind": "Literal",
     "name": "first",
-    "value": 5
+    "value": 10
   }
 ];
 return {
@@ -208,7 +208,7 @@ return {
                 "storageKey": null
               }
             ],
-            "storageKey": "imagesConnection(first:5)"
+            "storageKey": "imagesConnection(first:10)"
           },
           {
             "alias": null,
@@ -225,12 +225,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "07dfbdbd36ea8948f4cea3ddf1d8f6e4",
+    "cacheID": "aac6b9cad869315c9dab926d9b57830b",
     "id": null,
     "metadata": {},
     "name": "pagePaginatedAlbumViewQuery",
     "operationKind": "query",
-    "text": "query pagePaginatedAlbumViewQuery(\n  $id: ID!\n) {\n  albums(ids: [$id]) {\n    id\n    name\n    count\n    ...pagePaginatedAlbumView_albumImages\n  }\n}\n\nfragment pagePaginatedAlbumView_albumImages on GalleryAlbum {\n  imagesConnection(first: 5) {\n    edges {\n      node {\n        id\n        name\n        description\n        url\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  id\n}\n"
+    "text": "query pagePaginatedAlbumViewQuery(\n  $id: ID!\n) {\n  albums(ids: [$id]) {\n    id\n    name\n    count\n    ...pagePaginatedAlbumView_albumImages\n  }\n}\n\nfragment pagePaginatedAlbumView_albumImages on GalleryAlbum {\n  imagesConnection(first: 10) {\n    edges {\n      node {\n        id\n        name\n        description\n        url\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  id\n}\n"
   }
 };
 })();
