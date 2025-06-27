@@ -2,6 +2,10 @@
   "name": "@capventis-proj/frontend",
   "version": "0.1.0",
   "private": true,
+  "files": [
+    ".next",
+    "public"
+  ],
   "scripts": {
     "dev": "next dev --turbopack",
     "relay": "relay-compiler",
