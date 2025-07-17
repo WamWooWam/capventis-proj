@@ -1,6 +1,6 @@
-import { memo } from "react";
 import AlbumImages from "./AlbumImages";
 import Link from "next/link";
+import { memo } from "react";
 
 type AlbumViewProps = {
     readonly id?: string | undefined;
@@ -11,6 +11,7 @@ type AlbumViewProps = {
             readonly height: number;
             readonly name: string | null | undefined;
             readonly url: string;
+            readonly thumbUrl: string;
             readonly width: number;
         } | null | undefined> | null | undefined;
     }

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<48da549113e2d8848f96a2ee0ddea67d>>
+ * @generated SignedSource<<d999dc3848d646c5bfff3d0666d88bfa>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -22,7 +22,7 @@ export type UploadDialogGetKeyMutation$variables = {
 };
 export type UploadDialogGetKeyMutation$data = {
   readonly createImage: ReadonlyArray<{
-    readonly key: string;
+    readonly token: string;
   } | null | undefined> | null | undefined;
 };
 export type UploadDialogGetKeyMutation = {
@@ -57,7 +57,7 @@ v1 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "key",
+        "name": "token",
         "storageKey": null
       }
     ],
@@ -82,16 +82,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "46454476530b78bf25b8cb9d808b7d56",
+    "cacheID": "cc9834118ffc316f37e9eb2039fe6c2c",
     "id": null,
     "metadata": {},
     "name": "UploadDialogGetKeyMutation",
     "operationKind": "mutation",
-    "text": "mutation UploadDialogGetKeyMutation(\n  $params: GalleryCreateImageInput!\n) {\n  createImage(input: $params) {\n    key\n  }\n}\n"
+    "text": "mutation UploadDialogGetKeyMutation(\n  $params: GalleryCreateImageInput!\n) {\n  createImage(input: $params) {\n    token\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "fd23a1e395bf76e70ad12aded8eb3f1b";
+(node as any).hash = "73f64255dc200a311cdae4a030c77d6a";
 
 export default node;

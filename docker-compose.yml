@@ -16,7 +16,6 @@ services:
       - 4000
     environment:
       - HOST=https://wamwoowam.co.uk/gallery/
-      - UPLOAD_HMAC_KEY=QmGsiruVLQmrr5Ezp6UIabHd44CSqSuyPnsRDLQ95kVF08NYnUsCYghljU7MSM2Y
       - DB_FILE=/data/db/prod.db
     volumes:
       - database:/data/db

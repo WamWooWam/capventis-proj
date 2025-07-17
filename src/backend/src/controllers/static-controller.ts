@@ -5,6 +5,8 @@ import multer, { memoryStorage } from 'multer'
 
 import { fileTypeFromBuffer } from 'file-type/core'
 import { imageSize } from 'image-size'
+import { getUploadHmacKey } from '../util.js';
+import sharp from 'sharp';
 
 const upload = multer({ storage: memoryStorage(), limits: { fileSize: 5_000_000 } });
 
@@ -36,9 +38,37 @@ async function getImage(req: Request, resp: Response) {
         .send(data.data)
 }
 
+async function getImageThumbnail(req: Request, resp: Response) {
+    const { id } = req.params;
+
+    if (!id) {
+        resp
+            .status(400)
+            .send("Bad request.");
+        return;
+    }
+
+    const image = await Image.findByPk(id, {
+        include: ImageData
+    });
+
+    if (!image || !image.ImageDatum) {
+        resp
+            .status(404)
+            .send("Not found.");
+        return;
+    }
+
+    const data = image.ImageDatum;
+
+    resp.contentType("image/jpeg")
+        .send(data.thumbnail)
+}
+
+
 async function uploadImage(req: Request, resp: Response) {
     const now = Date.now();
-    const uploadKey = process.env.UPLOAD_HMAC_KEY!
+    const uploadKey = getUploadHmacKey()
     if (!!!uploadKey) {
         resp
             .status(500)
@@ -103,12 +133,29 @@ async function uploadImage(req: Request, resp: Response) {
         return;
     }
 
-    const size = imageSize(new Uint8Array(file?.buffer!))
-    image.width = size.width;
-    image.height = size.height;
+    const imageBuffer = new Uint8Array(file?.buffer!);
+    const sImage = sharp(imageBuffer);
+
+    const metadata = await sImage.metadata();
+    if (!metadata.width || !metadata.height) {
+        resp
+            .status(400)
+            .send("Bad request.");
+        return;
+    }
+
+    const thumbnail = await sImage
+        .clone()
+        .resize(400, 400, { fit: 'inside' })
+        .toFormat('jpeg', { mozjpeg: true })
+        .toBuffer();
+
+    image.width = metadata.width;
+    image.height = metadata.height;
 
     await image.createImageDatum({
         data: <ArrayBuffer>req.file!.buffer,
+        thumbnail: thumbnail,
         mimeType: type.mime
     });
 
@@ -120,6 +167,12 @@ async function uploadImage(req: Request, resp: Response) {
 }
 
 export default function registerRoutes(router: Router) {
+    router.use((req, resp, next) => {
+        resp.setHeader("Cache-Control", "public, max-age=604800, immutable");
+        next();
+    });
+
     router.get('/static/image/:id', getImage);
+    router.get('/static/image/:id/thumb', getImageThumbnail);
     router.post('/static/image', upload.single('image'), uploadImage)
 }

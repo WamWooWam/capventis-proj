@@ -1,17 +1,23 @@
 import { createHmac, randomUUID } from "crypto";
 import { MutationResolvers } from "../__generated__/resolvers-types.js";
 import { Album, AlbumImage, Image } from "../database.js";
-import {  createImage } from "../adapter.js";
+import { createImage } from "../adapter.js";
+import { getUploadHmacKey } from "../util.js";
+import { ApolloContext } from "../index.js";
 
 export const imageMutators: Partial<MutationResolvers> = {
-    createImage: async (parent, args) => {
+    createImage: async (parent, args, context: ApolloContext) => {
+        if (context.user === null)
+            throw new Error("Unauthorised");
+
         const album = await Album.findByPk(args.input.album)
-        if (!album)
+        if (!album || album.UserId !== context.user.id)
             throw new Error("Album not found!")
 
-        const uploadKey = process.env.UPLOAD_HMAC_KEY!
+        const uploadKey = getUploadHmacKey()
         if (!uploadKey)
             throw new Error("Uploads are not configured on this server.")
+
         const expireDate = new Date(Date.now() + (10 * 60_000)).toISOString();
         const maxIndex = <number>(await AlbumImage.max("index", { where: { AlbumId: album.id } })) + 10;
 
@@ -27,6 +33,8 @@ export const imageMutators: Partial<MutationResolvers> = {
                 description,
                 width: -1,
                 height: -1,
+
+                UserId: context.user.id
             });
 
             await album.addImage(image, { through: { index: maxIndex + (i * 10) } })
@@ -41,17 +49,21 @@ export const imageMutators: Partial<MutationResolvers> = {
                 .digest('base64')
 
             keys.push({
-                key: `${key}.${hash}`,
+                token: `${key}.${hash}`,
                 expiresAt: expireDate
             })
         }
 
         return keys;
     },
-    updateImage: async (parent, args) => {
+    updateImage: async (parent, args, context: ApolloContext) => {
+        if (context.user === null)
+            throw new Error("Unauthorised");
+
         const { id } = args.input;
         const image = await Image.findByPk(id);
-        if (!image) throw new Error("Not found!");
+        if (!image || image.UserId !== context.user.id)
+            throw new Error("Not found!");
 
         if (args.input.name) {
             image.name = args.input.name;
@@ -65,12 +77,16 @@ export const imageMutators: Partial<MutationResolvers> = {
 
         return createImage(image)
     },
-    deleteImage: async (parent, args) => {
+    deleteImage: async (parent, args, context: ApolloContext) => {
+        if (context.user === null)
+            throw new Error("Unauthorised");
+
         let ids = []
         for (const id of args.input) {
             try {
                 const image = await Image.findByPk(id);
-                if (!image) throw new Error("Not found!");
+                if (!image || image.UserId !== context.user.id)
+                    throw new Error("Not found!");
                 await image.destroy();
 
                 ids.push(id);

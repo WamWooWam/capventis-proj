@@ -15,7 +15,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-
 export const metadata: Metadata = {
   title: "Wam's Gallery",
   description: "A gallery application written with Next.js",
@@ -32,7 +31,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} scheme-only-light antialiased`}
       >
         <RelayContainer>
-          {children}
+          <div className="max-w-[1200px] ml-auto mr-auto">
+            {children}
+          </div>
         </RelayContainer>
       </body>
     </html>

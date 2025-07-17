@@ -1,5 +1,5 @@
-import { Album, AlbumImage, Image } from "./database.js";
-import { GalleryAlbum, GalleryImage } from "./__generated__/resolvers-types.js";
+import { Album, AlbumImage, Image, User } from "./database.js";
+import { GalleryAlbum, GalleryImage, GalleryUser } from "./__generated__/resolvers-types.js";
 
 export function createAlbum(album: Album | null): GalleryAlbum {
     if (!album)
@@ -22,4 +22,15 @@ export function createImage(image: Image | null): GalleryImage {
         width: image.width,
         height: image.height
     }) as GalleryImage
+}
+
+export function createUser(user: User | null): GalleryUser {
+    if (!user)
+        return null!
+
+    return ({
+        id: user.id,
+        name: user.name,
+        email: user.email
+    }) as GalleryUser
 }

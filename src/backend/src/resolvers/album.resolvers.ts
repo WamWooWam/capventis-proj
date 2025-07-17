@@ -1,10 +1,17 @@
-import { AlbumImage, Image } from "../database.js";
-import { GalleryAlbumImagesConnection, GalleryAlbumResolvers, GalleryImage } from "../__generated__/resolvers-types.js";
-import { createImage } from "../adapter.js";
+import { Album, AlbumImage, Image, User } from "../database.js";
+import { GalleryAlbumImagesConnection, GalleryAlbumResolvers, GalleryImage, GalleryUser } from "../__generated__/resolvers-types.js";
+import { createImage, createUser } from "../adapter.js";
+
 import { Op } from "sequelize";
 
 export const albumResolvers: GalleryAlbumResolvers = {
-    count: async (parent, args, contextValue, info): Promise<number> => {
+    owner: async (parent, args, context, info): Promise<GalleryUser> => {
+        // little bit expensive but this shouldnt be too bad
+        const result = await Album.findByPk(parent.id)
+
+        return createUser(await User.findByPk(result?.UserId));
+    },
+    count: async (parent, args, context, info): Promise<number> => {
         return await AlbumImage.count({
             where: {
                 AlbumId: parent.id
@@ -18,7 +25,7 @@ export const albumResolvers: GalleryAlbumResolvers = {
             }]
         })
     },
-    images: async (parent, args, contextValue, info): Promise<GalleryImage[]> => {
+    images: async (parent, args, context, info): Promise<GalleryImage[]> => {
         const result = await AlbumImage.findAll({
             where: {
                 AlbumId: parent.id

@@ -25,6 +25,67 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-dialog { 
+dialog {
   border: none !important;
+}
+
+dialog::backdrop {
+  animation: show_backdrop 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+dialog[open]>div {
+  transform-origin: center;
+  animation: show_desktop 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+dialog[open].closing>div {
+  animation: hide_desktop 0.25s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+
+dialog[open].closing::backdrop {
+  animation: hide_backdrop 0.25s cubic-bezier(0.55, 0, 1, 0.45) 0.25s forwards;
+}
+
+@keyframes show_desktop {
+  from {
+    transform: perspective(1000px) translateZ(-200px) rotateX(20deg);
+    opacity: 0;
+  }
+
+  to {
+    transform: perspective(1000px) translateZ(0) rotateX(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes hide_desktop {
+  from {
+    transform: perspective(1000px) translateZ(0) rotateX(0deg);
+    opacity: 1;
+  }
+
+  to {
+    transform: perspective(1000px) translateZ(-200px) rotateX(20deg);
+    opacity: 0;
+  }
+}
+
+@keyframes show_backdrop {
+  from {
+    background: rgba(0, 0, 0, 0);
+  }
+
+  to {
+    background: rgba(0, 0, 0, 0.6);
+  }
+}
+
+@keyframes hide_backdrop {
+  from {
+    background: rgba(0, 0, 0, 0.6);
+  }
+
+  to {
+    background: rgba(0, 0, 0, 0);
+  }
 }

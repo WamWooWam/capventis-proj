@@ -2,6 +2,14 @@ interface Node {
   id: ID!
 }
 
+type GalleryUser implements Node {
+  id: ID!,
+  name: String!
+  email: String!
+  albums: [GalleryAlbum]
+}
+
+
 # Image type defines an image in the gallery
 type GalleryImage implements Node {
   id: ID!
@@ -10,6 +18,7 @@ type GalleryImage implements Node {
   width: Int!
   height: Int!
   url: String!
+  thumbUrl: String!
 }
 
 # Album as a collection of images
@@ -17,6 +26,7 @@ type GalleryAlbum implements Node {
   id: ID!
   name: String!
   count: Int!
+  owner: GalleryUser!
   images: [GalleryImage]
   imagesConnection(first: Int, after: ID): GalleryAlbumImagesConnection!
 }
@@ -44,6 +54,7 @@ type PageInfo {
 # clients can execute, along with the return type for each.
 type Query {
   node(id: ID): Node
+  user: GalleryUser
   albums(ids: [ID!]): [GalleryAlbum]
 }
 
@@ -73,12 +84,31 @@ input GalleryUpdateImageInput {
 }
 
 type GalleryCreateImageKey {
-  key: String!
+  token: String!
   expiresAt: String!
 }
 
+input GalleryCreateUserInput {
+  name: String!
+  email: String!
+  password: String!
+}
+
+input GalleryCreateLoginInput {
+  email: String!
+  password: String!
+}
+
+type GalleryLogin {
+  token: String
+}
 
 type Mutation {
+  createUser(input: GalleryCreateUserInput!): GalleryUser
+  deleteUser(input: ID!): ID!
+
+  createLogin(input: GalleryCreateLoginInput!): GalleryLogin
+  
   createAlbum(input: GalleryCreateAlbumInput!): GalleryAlbum
   updateAlbum(input: GalleryUpdateAlbumInput!): GalleryAlbum
   deleteAlbum(input: [ID!]!): [ID!]!

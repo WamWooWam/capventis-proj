@@ -26,6 +26,7 @@
     "multer": "^2.0.1",
     "sequelize": "^6.37.7",
     "sequelize-cursor-pagination": "^3.5.1",
+    "sharp": "^0.34.3",
     "sqlite3": "^5.1.7",
     "typescript": "^5"
   },

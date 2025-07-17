@@ -1,5 +1,5 @@
 import { GraphQLResolveInfo } from 'graphql';
-import { MyContext } from '../index';
+import { ApolloContext } from '../index';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -24,6 +24,7 @@ export type GalleryAlbum = Node & {
   images?: Maybe<Array<Maybe<GalleryImage>>>;
   imagesConnection: GalleryAlbumImagesConnection;
   name: Scalars['String']['output'];
+  owner: GalleryUser;
 };
 
 
@@ -57,12 +58,23 @@ export type GalleryCreateImageInput = {
 export type GalleryCreateImageKey = {
   __typename?: 'GalleryCreateImageKey';
   expiresAt: Scalars['String']['output'];
-  key: Scalars['String']['output'];
+  token: Scalars['String']['output'];
 };
 
 export type GalleryCreateImageRequest = {
   description: Scalars['String']['input'];
   name: Scalars['String']['input'];
+};
+
+export type GalleryCreateLoginInput = {
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+};
+
+export type GalleryCreateUserInput = {
+  email: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  password: Scalars['String']['input'];
 };
 
 export type GalleryImage = Node & {
@@ -71,8 +83,14 @@ export type GalleryImage = Node & {
   height: Scalars['Int']['output'];
   id: Scalars['ID']['output'];
   name?: Maybe<Scalars['String']['output']>;
+  thumbUrl: Scalars['String']['output'];
   url: Scalars['String']['output'];
   width: Scalars['Int']['output'];
+};
+
+export type GalleryLogin = {
+  __typename?: 'GalleryLogin';
+  token?: Maybe<Scalars['String']['output']>;
 };
 
 export type GalleryUpdateAlbumInput = {
@@ -86,12 +104,23 @@ export type GalleryUpdateImageInput = {
   name: Scalars['String']['input'];
 };
 
+export type GalleryUser = Node & {
+  __typename?: 'GalleryUser';
+  albums?: Maybe<Array<Maybe<GalleryAlbum>>>;
+  email: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createAlbum?: Maybe<GalleryAlbum>;
   createImage?: Maybe<Array<Maybe<GalleryCreateImageKey>>>;
+  createLogin?: Maybe<GalleryLogin>;
+  createUser?: Maybe<GalleryUser>;
   deleteAlbum: Array<Scalars['ID']['output']>;
   deleteImage: Array<Scalars['ID']['output']>;
+  deleteUser: Scalars['ID']['output'];
   updateAlbum?: Maybe<GalleryAlbum>;
   updateImage?: Maybe<GalleryImage>;
 };
@@ -107,6 +136,16 @@ export type MutationCreateImageArgs = {
 };
 
 
+export type MutationCreateLoginArgs = {
+  input: GalleryCreateLoginInput;
+};
+
+
+export type MutationCreateUserArgs = {
+  input: GalleryCreateUserInput;
+};
+
+
 export type MutationDeleteAlbumArgs = {
   input: Array<Scalars['ID']['input']>;
 };
@@ -114,6 +153,11 @@ export type MutationDeleteAlbumArgs = {
 
 export type MutationDeleteImageArgs = {
   input: Array<Scalars['ID']['input']>;
+};
+
+
+export type MutationDeleteUserArgs = {
+  input: Scalars['ID']['input'];
 };
 
 
@@ -142,6 +186,7 @@ export type Query = {
   __typename?: 'Query';
   albums?: Maybe<Array<Maybe<GalleryAlbum>>>;
   node?: Maybe<Node>;
+  user?: Maybe<GalleryUser>;
 };
 
 
@@ -225,7 +270,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping of interface types */
 export type ResolversInterfaceTypes<_RefType extends Record<string, unknown>> = ResolversObject<{
-  Node: ( GalleryAlbum ) | ( GalleryImage );
+  Node: ( GalleryAlbum ) | ( GalleryImage ) | ( GalleryUser );
 }>;
 
 /** Mapping between all available schema types and the resolvers types */
@@ -238,9 +283,13 @@ export type ResolversTypes = ResolversObject<{
   GalleryCreateImageInput: GalleryCreateImageInput;
   GalleryCreateImageKey: ResolverTypeWrapper<GalleryCreateImageKey>;
   GalleryCreateImageRequest: GalleryCreateImageRequest;
+  GalleryCreateLoginInput: GalleryCreateLoginInput;
+  GalleryCreateUserInput: GalleryCreateUserInput;
   GalleryImage: ResolverTypeWrapper<GalleryImage>;
+  GalleryLogin: ResolverTypeWrapper<GalleryLogin>;
   GalleryUpdateAlbumInput: GalleryUpdateAlbumInput;
   GalleryUpdateImageInput: GalleryUpdateImageInput;
+  GalleryUser: ResolverTypeWrapper<GalleryUser>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   Mutation: ResolverTypeWrapper<{}>;
@@ -260,9 +309,13 @@ export type ResolversParentTypes = ResolversObject<{
   GalleryCreateImageInput: GalleryCreateImageInput;
   GalleryCreateImageKey: GalleryCreateImageKey;
   GalleryCreateImageRequest: GalleryCreateImageRequest;
+  GalleryCreateLoginInput: GalleryCreateLoginInput;
+  GalleryCreateUserInput: GalleryCreateUserInput;
   GalleryImage: GalleryImage;
+  GalleryLogin: GalleryLogin;
   GalleryUpdateAlbumInput: GalleryUpdateAlbumInput;
   GalleryUpdateImageInput: GalleryUpdateImageInput;
+  GalleryUser: GalleryUser;
   ID: Scalars['ID']['output'];
   Int: Scalars['Int']['output'];
   Mutation: {};
@@ -272,59 +325,77 @@ export type ResolversParentTypes = ResolversObject<{
   String: Scalars['String']['output'];
 }>;
 
-export type GalleryAlbumResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['GalleryAlbum'] = ResolversParentTypes['GalleryAlbum']> = ResolversObject<{
+export type GalleryAlbumResolvers<ContextType = ApolloContext, ParentType extends ResolversParentTypes['GalleryAlbum'] = ResolversParentTypes['GalleryAlbum']> = ResolversObject<{
   count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   images?: Resolver<Maybe<Array<Maybe<ResolversTypes['GalleryImage']>>>, ParentType, ContextType>;
   imagesConnection?: Resolver<ResolversTypes['GalleryAlbumImagesConnection'], ParentType, ContextType, Partial<GalleryAlbumImagesConnectionArgs>>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  owner?: Resolver<ResolversTypes['GalleryUser'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type GalleryAlbumImagesConnectionResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['GalleryAlbumImagesConnection'] = ResolversParentTypes['GalleryAlbumImagesConnection']> = ResolversObject<{
+export type GalleryAlbumImagesConnectionResolvers<ContextType = ApolloContext, ParentType extends ResolversParentTypes['GalleryAlbumImagesConnection'] = ResolversParentTypes['GalleryAlbumImagesConnection']> = ResolversObject<{
   edges?: Resolver<Maybe<Array<Maybe<ResolversTypes['GalleryAlbumImagesEdge']>>>, ParentType, ContextType>;
   images?: Resolver<Maybe<Array<Maybe<ResolversTypes['GalleryImage']>>>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type GalleryAlbumImagesEdgeResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['GalleryAlbumImagesEdge'] = ResolversParentTypes['GalleryAlbumImagesEdge']> = ResolversObject<{
+export type GalleryAlbumImagesEdgeResolvers<ContextType = ApolloContext, ParentType extends ResolversParentTypes['GalleryAlbumImagesEdge'] = ResolversParentTypes['GalleryAlbumImagesEdge']> = ResolversObject<{
   cursor?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   node?: Resolver<Maybe<ResolversTypes['GalleryImage']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type GalleryCreateImageKeyResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['GalleryCreateImageKey'] = ResolversParentTypes['GalleryCreateImageKey']> = ResolversObject<{
+export type GalleryCreateImageKeyResolvers<ContextType = ApolloContext, ParentType extends ResolversParentTypes['GalleryCreateImageKey'] = ResolversParentTypes['GalleryCreateImageKey']> = ResolversObject<{
   expiresAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  key?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  token?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type GalleryImageResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['GalleryImage'] = ResolversParentTypes['GalleryImage']> = ResolversObject<{
+export type GalleryImageResolvers<ContextType = ApolloContext, ParentType extends ResolversParentTypes['GalleryImage'] = ResolversParentTypes['GalleryImage']> = ResolversObject<{
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   height?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  thumbUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   width?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type MutationResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
+export type GalleryLoginResolvers<ContextType = ApolloContext, ParentType extends ResolversParentTypes['GalleryLogin'] = ResolversParentTypes['GalleryLogin']> = ResolversObject<{
+  token?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type GalleryUserResolvers<ContextType = ApolloContext, ParentType extends ResolversParentTypes['GalleryUser'] = ResolversParentTypes['GalleryUser']> = ResolversObject<{
+  albums?: Resolver<Maybe<Array<Maybe<ResolversTypes['GalleryAlbum']>>>, ParentType, ContextType>;
+  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type MutationResolvers<ContextType = ApolloContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   createAlbum?: Resolver<Maybe<ResolversTypes['GalleryAlbum']>, ParentType, ContextType, RequireFields<MutationCreateAlbumArgs, 'input'>>;
   createImage?: Resolver<Maybe<Array<Maybe<ResolversTypes['GalleryCreateImageKey']>>>, ParentType, ContextType, RequireFields<MutationCreateImageArgs, 'input'>>;
+  createLogin?: Resolver<Maybe<ResolversTypes['GalleryLogin']>, ParentType, ContextType, RequireFields<MutationCreateLoginArgs, 'input'>>;
+  createUser?: Resolver<Maybe<ResolversTypes['GalleryUser']>, ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'input'>>;
   deleteAlbum?: Resolver<Array<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationDeleteAlbumArgs, 'input'>>;
   deleteImage?: Resolver<Array<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationDeleteImageArgs, 'input'>>;
+  deleteUser?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteUserArgs, 'input'>>;
   updateAlbum?: Resolver<Maybe<ResolversTypes['GalleryAlbum']>, ParentType, ContextType, RequireFields<MutationUpdateAlbumArgs, 'input'>>;
   updateImage?: Resolver<Maybe<ResolversTypes['GalleryImage']>, ParentType, ContextType, RequireFields<MutationUpdateImageArgs, 'input'>>;
 }>;
 
-export type NodeResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Node'] = ResolversParentTypes['Node']> = ResolversObject<{
-  __resolveType: TypeResolveFn<'GalleryAlbum' | 'GalleryImage', ParentType, ContextType>;
+export type NodeResolvers<ContextType = ApolloContext, ParentType extends ResolversParentTypes['Node'] = ResolversParentTypes['Node']> = ResolversObject<{
+  __resolveType: TypeResolveFn<'GalleryAlbum' | 'GalleryImage' | 'GalleryUser', ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
 }>;
 
-export type PageInfoResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo']> = ResolversObject<{
+export type PageInfoResolvers<ContextType = ApolloContext, ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo']> = ResolversObject<{
   endCursor?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   hasPreviousPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -332,17 +403,20 @@ export type PageInfoResolvers<ContextType = MyContext, ParentType extends Resolv
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type QueryResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
+export type QueryResolvers<ContextType = ApolloContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   albums?: Resolver<Maybe<Array<Maybe<ResolversTypes['GalleryAlbum']>>>, ParentType, ContextType, Partial<QueryAlbumsArgs>>;
   node?: Resolver<Maybe<ResolversTypes['Node']>, ParentType, ContextType, Partial<QueryNodeArgs>>;
+  user?: Resolver<Maybe<ResolversTypes['GalleryUser']>, ParentType, ContextType>;
 }>;
 
-export type Resolvers<ContextType = MyContext> = ResolversObject<{
+export type Resolvers<ContextType = ApolloContext> = ResolversObject<{
   GalleryAlbum?: GalleryAlbumResolvers<ContextType>;
   GalleryAlbumImagesConnection?: GalleryAlbumImagesConnectionResolvers<ContextType>;
   GalleryAlbumImagesEdge?: GalleryAlbumImagesEdgeResolvers<ContextType>;
   GalleryCreateImageKey?: GalleryCreateImageKeyResolvers<ContextType>;
   GalleryImage?: GalleryImageResolvers<ContextType>;
+  GalleryLogin?: GalleryLoginResolvers<ContextType>;
+  GalleryUser?: GalleryUserResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Node?: NodeResolvers<ContextType>;
   PageInfo?: PageInfoResolvers<ContextType>;

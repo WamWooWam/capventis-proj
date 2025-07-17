@@ -1,14 +1,17 @@
-import { UploadDialogGetKeyMutation, UploadDialogGetKeyMutation$data } from "@/__generated__/UploadDialogGetKeyMutation.graphql";
-import Button from "@/components/Button";
+"use client"
+
+import { ChangeEvent, DragEvent, useEffect, useRef, useState } from "react";
 import Dialog, { DialogProps } from "@/components/Dialog";
-import { ChangeEvent, DragEvent, useRef, useState } from "react";
+import { PayloadError, graphql } from "relay-runtime";
+import { UploadDialogGetKeyMutation, UploadDialogGetKeyMutation$data } from "@/__generated__/UploadDialogGetKeyMutation.graphql";
+
+import Button from "@/components/Button";
 import { useMutation } from "react-relay";
-import { graphql, PayloadError } from "relay-runtime";
 
 const getUploadKeyMutation = graphql`
     mutation UploadDialogGetKeyMutation($params: GalleryCreateImageInput!) {
         createImage(input: $params) {
-            key
+            token
         }
     }
 `
@@ -45,7 +48,7 @@ export default function UploadDialog({ albumId, isOpen, onClosed }: UploadDialog
                 return;
             }
 
-            const keys = [...response.createImage!.map(r => r!.key)]
+            const keys = [...response.createImage!.map(r => r!.token)]
             for (let i = 0; i < keys.length; i++) {
                 setUploadingFiles((f) => [...f, {
                     key: keys[i],
@@ -69,16 +72,15 @@ export default function UploadDialog({ albumId, isOpen, onClosed }: UploadDialog
                     method: 'POST',
                     body: data,
                     headers,
-                })
-                    .then((r) => {
-                        setUploadingFiles((f) => f.map(u => {
-                            if (u.key === key) {
-                                return { ...u, isUploaded: true };
-                            }
+                }).then((r) => {
+                    setUploadingFiles((f) => f.map(u => {
+                        if (u.key === key) {
+                            return { ...u, isUploaded: true };
+                        }
 
-                            return u;
-                        }));
-                    })
+                        return u;
+                    }));
+                })
 
                 fetches.push(promise);
             }
@@ -132,13 +134,30 @@ export default function UploadDialog({ albumId, isOpen, onClosed }: UploadDialog
         doUploads(files);
     }
 
+    // nice to know react isn't up to the baseline 2023 standards
+    useEffect(() => {
+        const input = ref.current;
+        if (!input) return;
+
+        const onCancel = (e: Event) => {
+            e.stopPropagation();
+            e.preventDefault();
+        }
+
+        input.addEventListener('cancel', onCancel);
+
+        return () => {
+            input.removeEventListener('cancel', onCancel);
+        }
+    })
+
     return (
         <Dialog title="Upload" size="large" isOpen={isOpen} onClosed={onClosed}>
-            <input ref={ref} type="file" className="hidden" onChange={onSelected} />
+            <input ref={ref} type="file" className="hidden" onChange={onSelected} accept="image/*" multiple />
             <div className="flex flex-row h-full"
                 onDragOver={onDragOver}
                 onDrop={onDrop}>
-                <div className="h-full flex-3/4 mr-2 bg-gray-100 dark:bg-gray-800 rounded-xl grid">
+                <div className="h-full flex-3/4 mr-2 bg-gray-100 dark:bg-gray-800 rounded-xl grid overflow-y-auto">
                     <div className="grid gap-2 grid-cols-1 lg:grid-cols-3">
                         {uploadingFiles.map(f => {
                             const uploadStyle = f.isUploaded ? "opacity-100" : "opacity-50";

@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
       language: 'typescript',
       eagerEsModules: false,
     },
-  },
+  }
 };
 
 export default nextConfig;

@@ -1,9 +1,10 @@
-import { CreateAlbumDialogMutation } from "@/__generated__/CreateAlbumDialogMutation.graphql";
 import Dialog, { DialogProps } from "@/components/Dialog";
-import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
-import { useMutation } from "react-relay";
+
+import { CreateAlbumDialogMutation } from "@/__generated__/CreateAlbumDialogMutation.graphql";
 import { graphql } from "relay-runtime";
+import { useMutation } from "react-relay";
+import { useRouter } from "next/navigation";
 
 const createAlbumMutation = graphql`
     mutation CreateAlbumDialogMutation($input: GalleryCreateAlbumInput!) {
