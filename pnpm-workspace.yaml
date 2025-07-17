@@ -1,10 +1,10 @@
 packages:
   - src/*
 
+injectWorkspacePackages: true
+
 onlyBuiltDependencies:
   - '@apollo/protobufjs'
   - '@tailwindcss/oxide'
   - sharp
   - sqlite3
-
-injectWorkspacePackages: true
